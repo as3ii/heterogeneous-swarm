@@ -1,0 +1,9 @@
+[aarch64]
+i.j.k.l
+
+[x86_64]
+i.j.k.l
+
+[all:vars]
+ansible_ssh_user=root
+ansible_ssh_private_key_file=~/.ssh/id_rsa

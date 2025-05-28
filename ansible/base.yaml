@@ -1,0 +1,28 @@
+---
+- name: Setup docker swarm
+  gather_facts: false
+  hosts: all
+
+  tasks:
+    - name: Update system
+      ansible.builtin.apt:
+        update_cache: true
+        upgrade: safe
+
+    - name: Ensure docker.io is installed
+      ansible.builtin.apt:
+        name:
+          - docker.io
+        state: present
+
+    - name: Ensure docker-compose is installed
+      ansible.builtin.apt:
+        name:
+          - docker-compose
+        state: present
+
+    - name: Ensure docker.socket is running
+      ansible.builtin.systemd_service:
+        name: docker.socket
+        enabled: true
+        state: started

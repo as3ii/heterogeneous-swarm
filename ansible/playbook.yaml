@@ -1,0 +1,3 @@
+---
+- name: Run base playbook
+  ansible.builtin.import_playbook: base.yaml
