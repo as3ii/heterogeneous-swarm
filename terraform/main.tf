@@ -32,6 +32,22 @@ variable "nodes" {
   }
 }
 
+variable "nameserver" {
+  type        = string
+  description = "Name server IP"
+  default     = "1.1.1.1"
+  validation {
+    condition     = can(regex("([0-9]{1,3}[.]){3}[0-9]{1,3}", var.nameserver))
+    error_message = "Invalid nameserver IP"
+  }
+}
+
+variable "searchdomain" {
+  type        = string
+  description = "Search domain"
+  default     = ""
+}
+
 variable "ssh_public_keys" {
   type        = list(string)
   description = "SSH public key files"
@@ -80,15 +96,15 @@ resource "proxmox_vm_qemu" "swarm" {
   #hagroup = ""
 
   # Cloud-init settings
-  os_type    = "cloud-init"
-  ssh_user   = "root"
-  ciuser     = "root"
-  cipassword = var.password
-  sshkeys    = join("\n", [for p in var.ssh_public_keys : file(p)])
-  ipconfig0  = each.value.network
-  skip_ipv6  = true # Acquiring an IPv6 address from the qemu guest agent isn't required
-  #nameserver = ""
-  #searchdomain = ""
+  os_type      = "cloud-init"
+  ssh_user     = "root"
+  ciuser       = "root"
+  cipassword   = var.password
+  sshkeys      = join("\n", [for p in var.ssh_public_keys : file(p)])
+  ipconfig0    = each.value.network
+  skip_ipv6    = true # Acquiring an IPv6 address from the qemu guest agent isn't required
+  nameserver   = var.nameserver
+  searchdomain = var.searchdomain
 
   # HW settings
   bios = "seabios"
