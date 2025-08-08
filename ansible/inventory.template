@@ -1,7 +1,10 @@
-[aarch64]
+[baremetal]
 i.j.k.l
 
-[x86_64]
+[vm]
+i.j.k.l
+
+[cluster_manager]
 i.j.k.l
 
 [all:vars]

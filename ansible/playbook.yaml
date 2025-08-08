@@ -1,3 +1,5 @@
 ---
-- name: Run base playbook
-  ansible.builtin.import_playbook: base.yaml
+- name: Run VMs playbook
+  ansible.builtin.import_playbook: vm.yaml
+- name: Run docker swarm playbook
+  ansible.builtin.import_playbook: docker.yaml

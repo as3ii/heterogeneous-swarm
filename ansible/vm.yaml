@@ -1,0 +1,22 @@
+---
+- name: Setup VMs' specific stuff
+  gather_facts: false
+  hosts: vm
+
+  tasks:
+    - name: Update system
+      ansible.builtin.apt:
+        update_cache: true
+        upgrade: safe
+
+    - name: Ensure QEMU guest agend is installed
+      ansible.builtin.apt:
+        name:
+          - qemu-guest-agent
+        state: present
+
+    - name: Ensure QEMU guest agent is running
+      ansible.builtin.systemd_service:
+        name: qemu-guest-agent
+        enabled: true
+        state: started
