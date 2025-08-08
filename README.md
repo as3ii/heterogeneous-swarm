@@ -28,6 +28,10 @@
   Please check/edit `terraform/main.tf`, make sure that the settings corresponds
   to those of the template (the disk size can be greater).
 
+- One or more ARM64 machines
+- Optionally bare metal x86_64 machines
+
+
 ### Generic
 
 - Manually install `opentofu`, `ansible` and `just` on your computer (you can avoid
@@ -38,9 +42,13 @@
   and fill the new file with your credentials and required data for the Proxmox host
   and the required VMs.
 - In the root of the project run `just tdeploy` to create the VMs.
-- While the container is creating, you can go in the `ansible/` folder, run
-  `cp inventory.template inventory` and configure your private ssh key file and the IP
-  of the newly created VMs and the ARM64 devices.
+- While the container is creating, you can go to the folder `ansible/` in another terminal,
+  run `cp inventory.template inventory` and configure your private ssh key file
+  and the IPs of the newly created VMs and bare metal devices.
+  Put in the `[cluster_manager]` section the IPs of the machines
+  that have to act as cluster managers
+- After the creation of the VMs, connect to them and the baremetal machines once
+  via ssh to accepth their public keys
 - In the root of the project run `just adeploy` to configure the cluster
 - Next you can use the cluster as you please
 
@@ -69,4 +77,6 @@ https://pve.proxmox.com/pve-docs/qm.1.html
 https://technotim.live/posts/cloud-init-cloud-image/
 
 ### Ansible
-TODO
+
+https://docs.ansible.com/ansible/latest/
+https://docs.docker.com/reference/cli/docker/swarm/
