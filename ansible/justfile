@@ -1,7 +1,9 @@
 playbook := "playbook.yaml"
 
+default: check dry
+
 fmt:
-    # TODO
+    @echo "TODO fmt"
 
 check:
     ansible-playbook {{playbook}} --syntax-check
@@ -11,5 +13,3 @@ dry:
 
 deploy:
     ansible-playbook {{playbook}}
-
-default: check dry

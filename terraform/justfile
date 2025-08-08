@@ -1,3 +1,5 @@
+default: check dry
+
 init:
     tofu init
 
@@ -15,5 +17,3 @@ deploy: check
 
 destroy:
     tofu destroy
-
-default: check dry
