@@ -1,6 +1,6 @@
 # Create a Docker Swarm cluster using one or more ARM64 devices and x86_64 VMs on Proxmox
 
-## How to use this repo
+## Cluster setup
 
 ### Prerequisites
 
@@ -51,6 +51,12 @@
   via ssh to accepth their public keys
 - In the root of the project run `just adeploy` to configure the cluster
 - Next you can use the cluster as you please
+- You can destroy the entire cluster and rebuild it with the same configs
+  by running `just destroy` followed by `just deploy`, just remember to handle
+  the fact that the new machines will have different public ssh keys.
+  The VMs' first boot may be slow, so the first invocation of `just deploy` may fail
+  during the first ansible tasks. Just wait a minute, re-run the command
+  and the deployment will run smoothly.
 
 ### Using nix (w/ direnv)
 
@@ -66,6 +72,11 @@
 
 ## Cluster structure
 TODO
+
+## Destroy the cluster
+
+- Run `just destroy` to destroy the swarm cluster and the Proxmox VMs.
+  Not all the changes done on baremetal machines will be reverted.
 
 ## Sources
 
