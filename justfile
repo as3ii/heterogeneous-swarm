@@ -18,10 +18,15 @@ dry:
 tdeploy:
     @just terraform/deploy
 
-adeploy: tdeploy
+adeploy:
     @just ansible/deploy
 
 deploy: tdeploy adeploy
+
+populate:
+    @just ansible/populate
+
+full-deploy: deploy populate
 
 destroy:
     @just terraform/destroy

@@ -1,0 +1,70 @@
+---
+version: '3.8'
+
+services:
+  traefik:
+    image: traefik:3
+    deploy:
+      replicas: 2
+      placement:
+        constraints:
+          - 'node.role == manager'
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+      update_config:
+        parallelism: 2
+        failure_action: rollback
+    ports:
+      - target: 80    # Container
+        published: 80 # Host
+        protocol: tcp
+        #mode: host   # Bind directly to the node IP
+        mode: ingress # Bind the swarm load balancer
+      - target: 443
+        published: 443
+        protocol: tcp
+        mode: ingress
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /root/templates/traefik/config/:/etc/traefik/:ro
+      #- /root/templates/traefik/certs/:/var/traefik/certs/:rw
+    networks:
+      - reverse_proxy
+    # Static configuration
+    command:
+      - "--global.checkNewVersion=false"      # Disable version check
+      - "--global.sendAnonymousUsage=false"   # Disable dev telemetry
+      # API Dashboard: disable in production!
+      - "--api.dashboard=true"
+      - "--api.insecure=false"
+      # HTTP EntryPoint
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
+      - "--entrypoints.web.http.redirections.entrypoint.permanent=true"
+      # HTTPS EntryPoint
+      - "--entrypoints.websecure.address=:443"
+      - "--entrypoints.websecure.http.tls=true"
+      # TLS Resolver
+      #- "--certificatesresolvers.letsencrypt.acme.email=test@example.com"
+      #- "--certificatesresolvers.letsencrypt.acme.storage=/var/traefik/certs/acme.json"
+      #- "--certificatesresolvers.letsencrypt.acme.caServer='https://acme-v02.api.letsencrypt.org/directory'"
+      #- "--certificatesresolvers.letsencrypt.acme.dnschallenge.provider=test"
+      #- "--certificatesresolvers.letsencrypt.acme.dnschallenge.resolvers='9.9.9.9:53,1.1.1.1:53'"
+      # Swarm Provider
+      - "--providers.swarm.endpoint=unix:///var/run/docker.sock"
+      - "--providers.swarm.exposedbydefault=false"
+      - "--providers.swarm.network=reverse_proxy"
+      - "--providers.swarm.watch=true"
+      # File Provider
+      - "--providers.file.directory=/etc/traefik"
+      - "--providers.file.watch=true"
+      # Logging
+      - "--log.level=INFO"
+
+networks:
+  reverse_proxy:
+    external: true

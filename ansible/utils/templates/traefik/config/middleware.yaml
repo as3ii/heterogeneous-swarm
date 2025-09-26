@@ -1,0 +1,33 @@
+---
+http:
+  middlewares:
+    default-headers:
+      headers:
+        BrowserXssFilter: true
+        ContentTypeNosniff: true
+        ForceSTSHeader: true
+        STSIncludeSubdomains: true
+        STSPreload: true
+        STSSeconds: 15552000
+        CustomFrameOptionsValue: SAMEORIGIN
+        CustomRequestHeaders:
+          X-Forwarded-Proto: https
+
+    default-whitelist:
+      ipWhiteList:
+        sourceRange:
+          - 192.168.0.0/16
+          - 10.0.0.0/8
+
+    secured:
+      chain:
+        middlewares:
+          - default-whitelist
+          - default-headers
+
+    user-auth:
+      basicAuth:
+        users:
+          # Generate the hasked key with the following command:
+          # openssl passwd -apr1 "P@ssw0rd"
+          - "user:hashedKey"

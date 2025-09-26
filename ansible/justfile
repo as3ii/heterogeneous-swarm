@@ -1,4 +1,6 @@
 playbook := "playbook.yaml"
+playbook_populate := "utils/swarm-populate.yaml"
+playbook_destroy := "utils/swarm-destroy.yaml"
 
 default: check dry
 
@@ -7,9 +9,17 @@ fmt:
 
 check:
     ansible-playbook {{playbook}} --syntax-check
+    ansible-playbook {{playbook_populate}} --syntax-check
+    ansible-playbook {{playbook_destroy}} --syntax-check
 
 dry:
     ansible-playbook {{playbook}} --check
 
 deploy:
     ansible-playbook {{playbook}}
+
+populate:
+    ansible-playbook {{playbook_populate}}
+
+destroy:
+    ansible-playbook {{playbook_destroy}}

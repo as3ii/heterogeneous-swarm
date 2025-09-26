@@ -70,7 +70,10 @@
 - Next clone this repo, `cd` in it and run `nix develop`
 - Follow the generic instructions skipping the first 2 steps
 
-## Cluster structure
+## Test the cluster
+
+- Check the configs inside `ansible/utils/templates/`
+
 TODO
 
 ## Destroy the cluster
@@ -87,7 +90,11 @@ https://github.com/Telmate/terraform-provider-proxmox/blob/master/docs/examples
 https://pve.proxmox.com/pve-docs/qm.1.html
 https://technotim.live/posts/cloud-init-cloud-image/
 
-### Ansible
+### Ansible/Docker
 
 https://docs.ansible.com/ansible/latest/
 https://docs.docker.com/reference/cli/docker/swarm/
+https://docs.docker.com/engine/swarm
+https://doc.traefik.io/traefik/
+https://grafana.com/docs/alloy/latest/
+https://github.com/ChristianLempa/boilerplates

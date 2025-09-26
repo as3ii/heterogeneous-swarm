@@ -1,0 +1,51 @@
+---
+version: '3.8'
+
+services:
+  alloy:
+    image: grafana/alloy:v1.10.2
+    deploy:
+      replicas: 3
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+      update_config:
+        parallelism: 3
+        failure_action: rollback
+    command:
+      - run
+      - --server.http.listen-addr=0.0.0.0:12345
+      - --storage.path=/var/lib/alloy/data
+      - /etc/alloy/config.alloy
+    ports:
+      - "12345:12345"
+    volumes:
+      - /root/templates/alloy/config.alloy:/etc/alloy/config.alloy:ro
+      - alloy_data:/var/lib/alloy/data
+      - /:/rootfs:ro
+      - /run:/run:ro
+      - /var/log:/var/log:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker/:ro
+      - /run/udev/data:/run/udev/data:ro
+    networks:
+      - reverse_proxy
+    labels:
+      - traefik.enable=true
+      - traefik.http.services.alloy.loadbalancer.server.port=12345
+      - traefik.http.services.alloy.loadbalancer.server.scheme=http
+      - traefik.http.routers.alloy.service=alloy
+      - traefik.http.routers.alloy.rule=Host(`alloy.example.com`)
+      - traefik.http.routers.alloy.entrypoints=websecure
+      - traefik.http.routers.alloy.tls=true
+      #- traefik.http.routers.alloy.tls.certresolver=letsencrypt
+
+volumes:
+  alloy_data:
+    driver: local
+
+networks:
+  reverse_proxy:
+    external: true

@@ -1,0 +1,59 @@
+---
+- name: Deploy local docker registry
+  gather_facts: false
+  hosts: cluster_manager
+
+  tasks:
+    - name: Deploy local registry on manager nodes
+      ansible.builtin.command: >
+        docker service create --name registry --constraint node.role==manager
+        --publish published=5000,target=5000 registry:2
+      register: docker_registry_deploy
+      failed_when: docker_registry_deploy.rc != 0
+      changed_when: true
+
+    - name: Set docker daemon to use the custom registry
+      ansible.builtin.debug:
+        msg: TODO
+
+    - name: Copy files
+      ansible.builtin.copy:
+        src: templates/
+        dest: /root/templates/
+        mode: "644"
+        directory_mode: "755"
+
+- name: Swarm populate
+  gather_facts: false
+  hosts: cluster_manager[0] # Only on the first manager
+
+  tasks:
+    - name: Create internal Traefik network
+      ansible.builtin.command: "docker network create -d overlay reverse_proxy"
+      register: docker_traefik_network
+      failed_when: docker_traefik_network.rc != 0
+      changed_when: true
+
+    - name: Deploy Traefik
+      ansible.builtin.command: "docker stack deploy --compose-file /root/templates/traefik/compose-swarm.yaml traefik"
+      register: docker_traefik_deploy
+      failed_when: docker_traefik_deploy.rc != 0
+      changed_when: true
+
+    - name: Deploy Loki
+      ansible.builtin.debug:
+        msg: TODO
+
+    - name: Deploy Prometheus
+      ansible.builtin.debug:
+        msg: TODO
+
+    - name: Deploy Alloy
+      ansible.builtin.command: "docker stack deploy --compose-file /root/templates/alloy/compose-swarm.yaml alloy"
+      register: docker_alloy_deploy
+      failed_when: docker_alloy_deploy.rc != 0
+      changed_when: true
+
+    - name: Deploy Graphana
+      ansible.builtin.debug:
+        msg: TODO

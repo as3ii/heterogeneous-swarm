@@ -1,0 +1,61 @@
+---
+- name: Destroy swarm
+  gather_facts: false
+  hosts: all
+
+  tasks:
+    - name: Purge all stacks
+      ansible.builtin.shell: "docker stack rm $(docker stack ls)"
+      register: swarm_leave
+      failed_when: swarm_leave.rc != 0
+      changed_when: true
+      ignore_errors: true
+
+    - name: Purge all services
+      ansible.builtin.shell: "docker service rm $(docker service ls -q)"
+      register: swarm_leave
+      failed_when: swarm_leave.rc != 0
+      changed_when: true
+      ignore_errors: true
+
+    - name: Leave swarm
+      ansible.builtin.command: "docker swarm leave -f"
+      register: swarm_leave
+      failed_when: swarm_leave.rc != 0
+      changed_when: true
+      ignore_errors: true
+
+    - name: Stop all containers
+      ansible.builtin.shell: "docker stop $(docker ps -q)"
+      register: docker_stop
+      failed_when: docker_stop.rc != 0
+      changed_when: true
+      ignore_errors: true
+
+    - name: Remove all containers
+      ansible.builtin.shell: "docker rm $(docker container ls -a -q)"
+      register: docker_rm
+      failed_when: docker_rm.rc != 0
+      changed_when: true
+      ignore_errors: true
+
+    - name: Disable all plugins
+      ansible.builtin.shell: "docker plugin disable $(docker plugin ls -q -f 'enabled=true')"
+      register: docker_plugin_disable
+      failed_when: docker_plugin_disable.rc != 0
+      changed_when: true
+      ignore_errors: true
+
+    - name: Remove all plugins
+      ansible.builtin.shell: "docker plugin rm -f $(docker plugin ls -q)"
+      register: docker_plugin_rm
+      failed_when: docker_plugin_rm.rc != 0
+      changed_when: true
+      ignore_errors: true
+
+    - name: Prune all images, networks and volumes
+      ansible.builtin.command: "docker system prune -a -f --volumes"
+      register: docker_system_prune
+      failed_when: docker_system_prune.rc != 0
+      changed_when: true
+      ignore_errors: true

@@ -1,0 +1,10 @@
+---
+http:
+  routers:
+    dashboard:
+      rule: "Host(`traefik.example.com`)"
+      service: api@internal
+      middlewares:
+        - secured
+        - user-auth
+      tls: {}
