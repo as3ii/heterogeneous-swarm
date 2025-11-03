@@ -1,3 +1,5 @@
+/result
+
 # terraform
 **/.terraform/*
 **.auto.tfvars
@@ -10,3 +12,6 @@
 
 # ansible
 **/inventory
+
+# typst
+**.pdf
