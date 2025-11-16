@@ -65,7 +65,7 @@
     radius: 2pt,
   )
   // Code block
-  show raw.where(block: true): set text(size: 1.2em)
+  show raw.where(block: true): set text(size: 1.0em)
   show raw.where(block: true): block.with(
     fill: luma(240),
     inset: 10pt,
