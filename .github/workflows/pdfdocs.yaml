@@ -1,0 +1,100 @@
+name: PDF Docs
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        description: 'Tag name for release'
+        required: false
+        default: test
+  push:
+    tags: ["v[0-9]+.[0-9]+.[0-9]+*"]
+  pull_request:
+    paths:
+      # trigger release workflow if this file change
+      - '.github/workflows/pdfdocs.yml'
+
+permissions:
+  contents: read
+  checks: write
+
+jobs:
+  tagname:
+    runs-on: ubuntu-latest
+    outputs:
+      tag_name: ${{ steps.tag.outputs.tag }}
+    steps:
+      - if: github.event_name == 'workflow_dispatch'
+        run: echo "TAG_NAME=${{ github.event.inputs.tag_name }}" >> $GITHUB_ENV
+      - if: github.event_name == 'push'
+        run: |
+          TAG_NAME=${{ github.ref }}
+          echo "TAG_NAME=${TAG_NAME#refs/tags/}" >> $GITHUB_ENV
+      - if: github.event_name == 'pull_request'
+        run: echo "TAG_NAME=debug" >> $GITHUB_ENV
+      - id: tag
+        run: echo "tag=$TAG_NAME" >> $GITHUB_OUTPUT
+
+  build:
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: nixbuild/nix-quick-install-action@v30
+      - uses: nix-community/cache-nix-action@v6
+        with:
+          # restore and save a cache using this key
+          primary-key: nix-${{ runner.os }}-${{ hashFiles('**/*.nix', '**/flake.lock') }}
+          # if there's no cache hit, restore a cache by this prefix
+          restore-prefixes-first-match: nix-${{ runner.os }}-
+          # collect garbage until the Nix store size (in bytes) is at most this number
+          # before trying to save a new cache
+          # 1G = 1073741824
+          gc-max-store-size-linux: 1G
+          # do purge caches
+          purge: true
+          # purge all versions of the cache
+          purge-prefixes: nix-${{ runner.os }}-
+          # created more than this number of seconds ago
+          purge-created: 0
+          # or, last accessed more than this number of seconds ago
+          # relative to the start of the `Post Restore and save Nix store` phase
+          purge-last-accessed: 0
+          # except any version with the key that is the same as the `primary-key`
+          purge-primary-key: never
+      - name: Build docs (it)
+        run: nix build .#docs-it
+      - name: Upload docs-it
+        uses: actions/upload-artifact@v4
+        with:
+          name: docs-it.pdf
+          path: ./result
+          retention-days: 1
+      - name: Build docs (en)
+        run: nix build .#docs-en
+      - name: Upload docs-en
+        uses: actions/upload-artifact@v4
+        with:
+          name: docs-en.pdf
+          path: ./result
+          retention-days: 1
+
+  publish-pdf:
+    if: github.event_name != 'pull_request'
+    needs:
+      - build
+      - tagname
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      GH_REPO: ${{ github.repository }}
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      TAG_NAME: ${{ needs.tagname.outputs.tag_name }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download shadowJar
+        uses: actions/download-artifact@v4
+      - name: Create Github Release
+        run: |
+          gh release create $TAG_NAME --title "$TAG_NAME" --target $GITHUB_SHA build/*
