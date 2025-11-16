@@ -10,7 +10,7 @@
       email: "lorenzo.debertolis@studio.unibo.it",
     ),
   ),
-  date: "30/10/2025",
+  date: "16/11/2025",
   language: lang,
 )
 
