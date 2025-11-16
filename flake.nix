@@ -85,12 +85,14 @@
             ansible
             just
             typst
+            typstyle
           ];
           shellHook = ''
             ${config.pre-commit.installationScript}
             alias typstwatch="typst watch -f pdf ./docs/typst/main.typ"
             alias typstwatch_en="typstwatch --input language=en"
             alias typstwatch_it="typstwatch --input language=it"
+            alias typstformat="typstyle --wrap-text -i ./docs/typst/"
             echo 1>&2 "Welcome to the development shell!"
           '';
         };
