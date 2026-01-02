@@ -96,8 +96,9 @@ Per semplificare le procedure di dispiegamento e distruzione delle VM e per il
 lancio dei vari #en[playbook] Ansible si è scelto di utilizzare #link(
   "https://github.com/casey/just",
 )[#en[just]], #en[command launcher] moderno ispirato da `make` ma con
-l'obiettivo di risolvere o evitare alcune sue idiosincrasie e allo stesso tempo
-semplificando il file di configurazione.
+l'obiettivo di risolvere o evitare alcune sue #link(
+  "https://github.com/casey/just?tab=readme-ov-file#what-are-the-idiosyncrasies-of-make-that-just-avoids",
+)[idiosincrasie] e allo stesso tempo semplificando il file di configurazione.
 
 === Cenni su altre tecnologie coinvolte
 
