@@ -36,7 +36,7 @@ basata su Debian 12 che permette di gestire in maniera semplificata VM e
 #en[container] LXC sia tramite SSH che interfaccia web, oltre ad avere delle API
 utilizzabili da software terzi. Il RaspberryPi invece utilizza una versione di
 Debian 12 ottimizzata dai produttori del SBC #footnote[#en[Single Board
-    Computer]] per questa piattaforma.
+  Computer]] per questa piattaforma.
 
 == Strumenti utilizzati
 
@@ -116,11 +116,11 @@ quando effettivamente necessario (invece di dover pre-allocare dall'inizio tutto
 lo spazio necessario al disco virtuale come per le immgini RAW) così da
 risparmiare spazio su disco, sopratutto se il #en[filesystem] sottostante non
 supporta e/o ottimizza file sparsi #footnote([#link(
-    "https://it.wikipedia.org/wiki/File_sparso",
-  )]). Permette inoltre il salvare le sole differenze rispetto a un'immagine
-QCOW2 in modalità sola lettura presa come riferimento, così da poter avere
-molteplici VM che utilizzano lo stesso disco base senza però dover avere
-un'intera copia per ogni singola VM.
+  "https://it.wikipedia.org/wiki/File_sparso",
+)]). Permette inoltre il salvare le sole differenze rispetto a un'immagine QCOW2
+in modalità sola lettura presa come riferimento, così da poter avere molteplici
+VM che utilizzano lo stesso disco base senza però dover avere un'intera copia
+per ogni singola VM.
 
 === LVM
 LVM (#en[Logical Volume Manager]) è un #en[framework] per mappare blocchi di
@@ -158,8 +158,8 @@ dichiarare i nodi che verranno creati e configurati specificando per ognuno un
 nome univoco, un eventuale ID numerico univoco (di default viene preso il primo
 ID disponibile), il template di partenza e le impostazioni di rete (di default
 viene impostato l'uso di DHCP per IPv4 e SLAAC #footnote[#link(
-    "https://en.wikipedia.org/wiki/IPv6#Stateless_address_autoconfiguration_(SLAAC)",
-  )] per IPv6). Qui sotto è stato riportato un esempio di configurazione.
+  "https://en.wikipedia.org/wiki/IPv6#Stateless_address_autoconfiguration_(SLAAC)",
+)] per IPv6). Qui sotto è stato riportato un esempio di configurazione.
 
 ```tfvars
 proxmox_api_url          = "https://a.b.c.d:8006/api2/json"
